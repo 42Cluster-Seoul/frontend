@@ -18,6 +18,7 @@ import fourtyTwoClusterBackendReducer from 'app/features/fourtyTwoClusterBackend
 import invitesReducers from 'app/features/invites/state/reducers';
 import importDashboardReducers from 'app/features/manage-dashboards/state/reducers';
 import organizationReducers from 'app/features/org/state/reducers';
+import paceProgressBarReducer from 'app/features/paceProgressBar/state/reducers';
 import panelsReducers from 'app/features/panel/state/reducers';
 import { reducer as pluginsReducer } from 'app/features/plugins/admin/state/reducer';
 import userReducers from 'app/features/profile/state/reducers';
@@ -53,6 +54,7 @@ const rootReducers = {
   ...supportBundlesReducer,
   ...authConfigReducers,
   ...fourtyTwoClusterBackendReducer,
+  ...paceProgressBarReducer,
   plugins: pluginsReducer,
   [alertingApi.reducerPath]: alertingApi.reducer,
   [publicDashboardApi.reducerPath]: publicDashboardApi.reducer,
