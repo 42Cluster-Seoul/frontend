@@ -17,6 +17,7 @@ import { DOCKED_LOCAL_STORAGE_KEY, DOCKED_MENU_OPEN_LOCAL_STORAGE_KEY } from './
 import { MegaMenu } from './MegaMenu/MegaMenu';
 // import { NavToolbar } from './NavToolbar/NavToolbar';
 import { ReturnToPrevious } from './ReturnToPrevious/ReturnToPrevious';
+import PaceProgressBar from './TopBar/PaceProgressBar';
 import { TopSearchBar } from './TopBar/TopSearchBar';
 import { TOP_BAR_LEVEL_HEIGHT } from './types';
 
@@ -67,6 +68,11 @@ export function AppChrome({ children }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chrome, url]);
 
+  useEffect(() => {
+    // console.log(123123);
+    console.log(window.performance);
+  });
+
   // Chromeless routes are without topNav, mega menu, search & command palette
   // We check chromeless twice here instead of having a separate path so {children}
   // doesn't get re-mounted when chromeless goes from true to false.
@@ -83,6 +89,7 @@ export function AppChrome({ children }: Props) {
             Skip to main content
           </LinkButton>
           <div className={cx(styles.topNav)}>
+            <PaceProgressBar />
             {!searchBarHidden && <TopSearchBar />}
             {!state.chromeless && <MegaMenu className={styles.dockedMegaMenu} onClose={() => {}} />}
             {/* <NavToolbar
