@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 
 import { LoadingState } from '@grafana/data';
 import { ClickOutsideWrapper } from '@grafana/ui';
-import MultiOptionDropdown from 'app/features/dashboard/containers/MultiOptionDropdown';
 import OptionDropdown from 'app/features/dashboard/containers/OptionDropdown';
 import { StoreState, ThunkDispatch } from 'app/types';
 
@@ -114,27 +113,35 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
     render() {
       const { variable, picker } = this.props;
       const showOptions = picker.id === variable.id; // true: dropdown 열림(picker), false: dropdown 닫힘(variable)
-      console.log('var', variable)
-      console.log('pick', picker)
+      console.log('var', variable);
+      console.log('pick', picker);
+
+      const renderList = [];
+
+      for (const value of variable.current.value) {
+        renderList.push(value);
+      }
+
+      for (const { value } of picker.selectedValues) {
+        renderList.push(value);
+      }
 
       return (
         <>
           <div className="variable-link-wrapper">
-            {/* {variable.multi ? (
-              <MultiOptionDropdown
-                values={variable.options}
+            <ClickOutsideWrapper onClick={this.onHideOptions}>
+              <OptionDropdown
+                variable={variable}
+                picker={picker}
                 onToggle={this.onToggleOption}
-                selectedValues={picker.selectedValues}
                 showOptions={this.onShowOptions}
               />
-            ) : (
-              <OptionDropdown values={variable.options} />
-            )} */}
-            {showOptions ? this.renderOptions(picker) : this.renderLink(variable)}
+            </ClickOutsideWrapper>
+            {/* {showOptions ? this.renderOptions(picker) : this.renderLink(variable)} */}
           </div>
           <div>
-            {picker.selectedValues.map((v, i) => (
-              <div key={`${v.text} ${i}`}>{v.text}</div>
+            {renderList.map((v, i) => (
+              <div key={`${v} ${i}`}>{v}</div>
             ))}
           </div>
         </>
@@ -163,6 +170,12 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
 
     renderOptions(picker: OptionsPickerState) {
       const { id } = this.props.variable;
+
+      const mock = [
+        { value: 'a', text: 'a', selected: false },
+        { value: 'b', text: 'b', selected: false },
+      ];
+
       return (
         <ClickOutsideWrapper onClick={this.onHideOptions}>
           <VariableInput
@@ -174,7 +187,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
             aria-controls={`options-${id}`}
           />
           <VariableOptions
-            values={picker.options}
+            values={mock}
             onToggle={this.onToggleOption}
             onToggleAll={this.onToggleAllOptions}
             highlightIndex={picker.highlightIndex}
