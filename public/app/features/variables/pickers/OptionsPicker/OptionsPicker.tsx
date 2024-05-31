@@ -118,7 +118,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
       return (
         <>
           <div className="variable-link-wrapper">
-            {picker.multi ? (
+            {variable.multi ? (
               <MultiOptionDropdown
                 values={variable.options}
                 onToggle={this.onToggleOption}
