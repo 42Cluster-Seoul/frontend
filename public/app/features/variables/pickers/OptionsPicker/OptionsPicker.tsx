@@ -114,11 +114,13 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
     render() {
       const { variable, picker } = this.props;
       const showOptions = picker.id === variable.id; // true: dropdown 열림(picker), false: dropdown 닫힘(variable)
+      console.log('var', variable)
+      console.log('pick', picker)
 
       return (
         <>
           <div className="variable-link-wrapper">
-            {variable.multi ? (
+            {/* {variable.multi ? (
               <MultiOptionDropdown
                 values={variable.options}
                 onToggle={this.onToggleOption}
@@ -127,8 +129,8 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
               />
             ) : (
               <OptionDropdown values={variable.options} />
-            )}
-            {/* {showOptions ? this.renderOptions(picker) : this.renderLink(variable)} */}
+            )} */}
+            {showOptions ? this.renderOptions(picker) : this.renderLink(variable)}
           </div>
           <div>
             {picker.selectedValues.map((v, i) => (
