@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { VariableOption } from '@grafana/data/src/types/templateVars';
@@ -11,13 +11,15 @@ import { GitHubButtonStyles } from '../../../../style/GitHubButtonStyles';
 
 interface Props {
   values: VariableOption[];
+  selectedValues: VariableOption[];
+  onToggle: (option: VariableOption, clearOthers: boolean) => void;
+  showOptions: () => void;
 }
 
-const OptionDropdown = ({ values }: Props) => {
+const OptionDropdown = ({ values, onToggle, selectedValues, showOptions }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const gitHubButtonStyles = useStyles2(GitHubButtonStyles);
   const styles = useStyles2(getStyles);
-
   const dashboardList = useDashboardList();
   const isValid = dashboardList !== undefined;
   const subCaterogyName = function (title: string | null) {
@@ -25,6 +27,13 @@ const OptionDropdown = ({ values }: Props) => {
       default:
         return 'namespace';
     }
+  };
+
+  const handleOnToggle = (option: VariableOption) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    const clearOthers = event.shiftKey || event.ctrlKey || event.metaKey;
+    event.preventDefault();
+    event.stopPropagation();
+    onToggle(option, clearOthers);
   };
 
   // 1. 현재 대시보드 uid 가져오기
@@ -40,9 +49,22 @@ const OptionDropdown = ({ values }: Props) => {
     url: `/d/${currDashboard.uid}/${currDashboard.title}?var-${subCaterogyName(currDashboard.title)}=${value.text}`,
     hideFromTabs: true,
     isCreateAction: true,
+    option: value,
   }));
+
   // 2. 현재 체크된 것 가져오기
-  const currSubCategory = values.filter((v) => v.selected === true)[0].text;
+  const check = (selectedValues: VariableOption[], title: string) => {
+    for (const value of selectedValues) {
+      if (value.text === title) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    showOptions();
+  }, [showOptions]);
 
   const MenuActions = () => {
     return (
@@ -50,15 +72,10 @@ const OptionDropdown = ({ values }: Props) => {
         {createActions.map((createAction, index) => (
           <Menu.Item
             key={index}
-            url={createAction.url}
             label={createAction.text}
             checkType={true}
-            isChecked={currSubCategory === createAction.text}
-            onClick={() => {
-              //   const target = e.target as HTMLButtonElement;
-              reportInteraction('grafana_menu_item_clicked', { url: createAction.url, from: 'quickadd' });
-              //   setCurrDashboard(target.textContent === null ? '' : target.textContent);
-            }}
+            isChecked={check(selectedValues, createAction.text)}
+            onClick={handleOnToggle(createAction.option)}
           />
         ))}
       </Menu>
@@ -76,7 +93,7 @@ const OptionDropdown = ({ values }: Props) => {
           <div>
             <Icon name="filter" />
           </div>
-          <div className={styles.text}>{currSubCategory}</div>
+          <div className={styles.text}>multi-select</div>
         </div>
       </ToolbarButton>
     </Dropdown>

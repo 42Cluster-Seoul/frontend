@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import { LoadingState } from '@grafana/data';
 import { ClickOutsideWrapper } from '@grafana/ui';
+import MultiOptionDropdown from 'app/features/dashboard/containers/MultiOptionDropdown';
 import OptionDropdown from 'app/features/dashboard/containers/OptionDropdown';
 import { StoreState, ThunkDispatch } from 'app/types';
 
@@ -111,16 +112,30 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
     };
 
     render() {
-      const { variable } = this.props;
-
-      // const { variable, picker } = this.props;
-      // const showOptions = picker.id === variable.id; // true: dropdown 열림(picker), false: dropdown 닫힘(variable)
+      const { variable, picker } = this.props;
+      const showOptions = picker.id === variable.id; // true: dropdown 열림(picker), false: dropdown 닫힘(variable)
 
       return (
-        <div className="variable-link-wrapper">
-          <OptionDropdown options={variable.options} />
-          {/* {showOptions ? this.renderOptions(picker) : this.renderLink(variable)} */}
-        </div>
+        <>
+          <div className="variable-link-wrapper">
+            {picker.multi ? (
+              <MultiOptionDropdown
+                values={variable.options}
+                onToggle={this.onToggleOption}
+                selectedValues={picker.selectedValues}
+                showOptions={this.onShowOptions}
+              />
+            ) : (
+              <OptionDropdown values={variable.options} />
+            )}
+            {/* {showOptions ? this.renderOptions(picker) : this.renderLink(variable)} */}
+          </div>
+          <div>
+            {picker.selectedValues.map((v, i) => (
+              <div key={`${v.text} ${i}`}>{v.text}</div>
+            ))}
+          </div>
+        </>
       );
     }
 
