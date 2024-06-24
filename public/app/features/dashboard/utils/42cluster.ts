@@ -20,7 +20,13 @@ export const determineUrl = function () {
 };
 
 export const variableQueryString = (variable: TypedVariableModel, selectedValues: VariableOption[]) => {
+  // TODO : /var-namespace=All
+  // 1) 미리 모든 variable을 받아와서 링크 구성하기
+  // 2) includeAll = true로 만들고, 내부적으로 selectedValues에 모두 체크되도록 실행하기
   const prefix = '?';
+  if (variable.multi) {
+    return prefix + variable.options.map((v: VariableOption) => `var-${variable.id}=${v.value}`).join('&');
+  }
   if (selectedValues.length) {
     return prefix + selectedValues.map((v: VariableOption) => `var-${variable.id}=${v.value}`).join('&');
   }
