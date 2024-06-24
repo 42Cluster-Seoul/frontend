@@ -18,7 +18,6 @@ const DashboardSelect = () => {
   const mqstyles = useStyles2(mediaQueryStyles);
   const uid: string | undefined = getDashboardUidFromUrl();
   const dashboardList = useDashboardList()?.filter((v) => v.uid.startsWith(uid?.[0]));
-  console.log('dashboardList', dashboardList);
   const [variable] = useTemplateVariable();
   const [createActions, setCreateActions] = useState<any>([]);
 
@@ -40,14 +39,14 @@ const DashboardSelect = () => {
         id: dashboard.uid,
         text: dashboard.title,
         icon: 'plus',
-        url: `${dashboard.url}/${variableQueryString(dashboard.uid)}`,
+        url: `/d/${dashboard.uid}`,
         hideFromTabs: true,
         isCreateAction: true,
       }))
     );
-  }, [variable]);
+  }, [variable, isOpen]);
 
-  const MenuActions = ({ createActions }) => {
+  const MenuActions = () => {
     return (
       <Menu>
         {createActions.map((createAction, index) => (
@@ -66,11 +65,7 @@ const DashboardSelect = () => {
   };
 
   return (
-    <Dropdown
-      overlay={<MenuActions createActions={createActions} />}
-      placement="bottom-start"
-      onVisibleChange={setIsOpen}
-    >
+    <Dropdown overlay={MenuActions} placement="bottom-start" onVisibleChange={setIsOpen}>
       <div className={styles.select}>
         <ToolbarButton
           isOpen={isOpen}

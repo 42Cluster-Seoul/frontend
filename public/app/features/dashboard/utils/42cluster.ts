@@ -22,11 +22,8 @@ export const determineUrl = function () {
 };
 
 export const variableQueryString = (uid: string) => {
-  console.log('uid', uid);
   const result = getVariablesState(uid);
-  console.log('result', result);
   const variable = result.variables.namespace;
-  console.log(variable);
   // TODO : /var-namespace=All
   // 1) 미리 모든 variable을 받아와서 링크 구성하기
   // 2) includeAll = true로 만들고, 내부적으로 selectedValues에 모두 체크되도록 실행하기
@@ -36,9 +33,10 @@ export const variableQueryString = (uid: string) => {
     return '';
   }
 
-  console.log(prefix + variable.options.map((v: VariableOption) => `var-${variable.id}=${v.value}`).join('&'));
+  // console.log(prefix + variable.options.map((v: VariableOption) => `var-${variable.id}=${v.value}`).join('&'));
 
   return prefix + variable.options.map((v: VariableOption) => `var-${variable.id}=${v.value}`).join('&');
+  // return prefix + `var-${variable.id}=All`;
 };
 
 export const selectedValuesQueryString = (selectedValues: VariableOption[], variableId: string) => {
