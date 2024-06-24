@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { mediaQueryStyles } from 'style/mediaQuery';
 
 import { GrafanaTheme2 } from '@grafana/data';
@@ -18,7 +18,9 @@ const DashboardSelect = () => {
   const mqstyles = useStyles2(mediaQueryStyles);
   const uid: string | undefined = getDashboardUidFromUrl();
   const dashboardList = useDashboardList()?.filter((v) => v.uid.startsWith(uid?.[0]));
-  const [variable, selectedValues] = useTemplateVariable();
+  console.log('dashboardList', dashboardList);
+  const [variable] = useTemplateVariable();
+  const [createActions, setCreateActions] = useState<any>([]);
 
   if (dashboardList === undefined) {
     return;
@@ -32,16 +34,20 @@ const DashboardSelect = () => {
     //   setCurrDashboard(target.textContent === null ? '' : target.textContent);
   };
 
-  const createActions = dashboardList.map((dashboard) => ({
-    id: dashboard.uid,
-    text: dashboard.title,
-    icon: 'plus',
-    url: `${dashboard.url}${variableQueryString(variable, selectedValues)}`,
-    hideFromTabs: true,
-    isCreateAction: true,
-  }));
+  useEffect(() => {
+    setCreateActions(
+      dashboardList.map((dashboard) => ({
+        id: dashboard.uid,
+        text: dashboard.title,
+        icon: 'plus',
+        url: `${dashboard.url}/${variableQueryString(dashboard.uid)}`,
+        hideFromTabs: true,
+        isCreateAction: true,
+      }))
+    );
+  }, [variable]);
 
-  const MenuActions = () => {
+  const MenuActions = ({ createActions }) => {
     return (
       <Menu>
         {createActions.map((createAction, index) => (
@@ -60,7 +66,11 @@ const DashboardSelect = () => {
   };
 
   return (
-    <Dropdown overlay={MenuActions} placement="bottom-start" onVisibleChange={setIsOpen}>
+    <Dropdown
+      overlay={<MenuActions createActions={createActions} />}
+      placement="bottom-start"
+      onVisibleChange={setIsOpen}
+    >
       <div className={styles.select}>
         <ToolbarButton
           isOpen={isOpen}
