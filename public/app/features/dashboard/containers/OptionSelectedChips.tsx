@@ -40,7 +40,7 @@ const OptionSelectedChips = () => {
       console.log(selectedValues, variable.options);
       for (const currOption of variable.options) {
         console.log(currOption);
-        if (currOption.value === option.value) {
+        if (currOption.value === value) {
           continue;
         }
         dispatch(toKeyedAction(uid, toggleOption({ option: currOption, clearOthers: false, forceSelect: false })));
